@@ -30,42 +30,78 @@ function Activities() {
       });
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading activities...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <span className="ms-3">Loading activities...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger" role="alert">
+          <h4 className="alert-heading">Error!</h4>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Activities</h2>
-      {activities.length === 0 ? (
-        <p>No activities found.</p>
-      ) : (
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>User</th>
-              <th>Activity Type</th>
-              <th>Duration (min)</th>
-              <th>Distance (km)</th>
-              <th>Calories</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {activities.map(activity => (
-              <tr key={activity.id}>
-                <td>{activity.id}</td>
-                <td>{activity.user_name || activity.user}</td>
-                <td>{activity.activity_type}</td>
-                <td>{activity.duration}</td>
-                <td>{activity.distance}</td>
-                <td>{activity.calories}</td>
-                <td>{new Date(activity.date).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div className="card shadow-lg">
+        <div className="card-header">
+          <h2 className="mb-0">
+            <i className="bi bi-activity me-2"></i>Activities
+          </h2>
+        </div>
+        <div className="card-body">
+          {activities.length === 0 ? (
+            <div className="alert alert-info" role="alert">
+              <i className="bi bi-info-circle me-2"></i>No activities found.
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Activity Type</th>
+                    <th scope="col">Duration (min)</th>
+                    <th scope="col">Distance (km)</th>
+                    <th scope="col">Calories</th>
+                    <th scope="col">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activities.map(activity => (
+                    <tr key={activity.id}>
+                      <td><span className="badge bg-secondary">{activity.id}</span></td>
+                      <td><strong>{activity.user_name || activity.user}</strong></td>
+                      <td><span className="badge bg-primary">{activity.activity_type}</span></td>
+                      <td>{activity.duration}</td>
+                      <td>{activity.distance}</td>
+                      <td><span className="badge bg-success">{activity.calories}</span></td>
+                      <td>{new Date(activity.date).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        <div className="card-footer text-muted">
+          Total Activities: <span className="badge bg-info">{activities.length}</span>
+        </div>
+      </div>
     </div>
   );
 }

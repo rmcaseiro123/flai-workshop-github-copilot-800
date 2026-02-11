@@ -30,36 +30,86 @@ function Leaderboard() {
       });
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading leaderboard...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  const getRankBadge = (index) => {
+    if (index === 0) return '🥇';
+    if (index === 1) return '🥈';
+    if (index === 2) return '🥉';
+    return index + 1;
+  };
+
+  const getRankClass = (index) => {
+    if (index === 0) return 'table-warning';
+    if (index === 1) return 'table-secondary';
+    if (index === 2) return 'table-danger';
+    return '';
+  };
+
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <span className="ms-3">Loading leaderboard...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger" role="alert">
+          <h4 className="alert-heading">Error!</h4>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Leaderboard</h2>
-      {leaderboard.length === 0 ? (
-        <p>No leaderboard data found.</p>
-      ) : (
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Username</th>
-              <th>Total Points</th>
-              <th>Activities Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaderboard.map((entry, index) => (
-              <tr key={entry.id || index}>
-                <td>{index + 1}</td>
-                <td>{entry.username || entry.user_name}</td>
-                <td>{entry.total_points || entry.points || 0}</td>
-                <td>{entry.activities_count || entry.activity_count || 0}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div className="card shadow-lg">
+        <div className="card-header">
+          <h2 className="mb-0">
+            <i className="bi bi-trophy me-2"></i>Leaderboard
+          </h2>
+        </div>
+        <div className="card-body">
+          {leaderboard.length === 0 ? (
+            <div className="alert alert-info" role="alert">
+              <i className="bi bi-info-circle me-2"></i>No leaderboard data found.
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Total Points</th>
+                    <th scope="col">Activities Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboard.map((entry, index) => (
+                    <tr key={entry.id || index} className={getRankClass(index)}>
+                      <td><h4 className="mb-0">{getRankBadge(index)}</h4></td>
+                      <td><strong>{entry.username || entry.user_name}</strong></td>
+                      <td><span className="badge bg-success fs-6">{entry.total_points || entry.points || 0}</span></td>
+                      <td><span className="badge bg-info fs-6">{entry.activities_count || entry.activity_count || 0}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        <div className="card-footer text-muted">
+          Total Competitors: <span className="badge bg-info">{leaderboard.length}</span>
+        </div>
+      </div>
     </div>
   );
 }
